@@ -1,19 +1,21 @@
-export default async function handler(req, res) {
-  const { message } = req.body;
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const responseBox = document.getElementById("response");
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const userMessage = input.value.trim();
+  if (userMessage === "") return;
+
+  responseBox.textContent = "Абрам думает...";
+
+  const res = await fetch("/api/gpt", {
     method: "POST",
     headers: {
-      Authorization: "Bearer " + process.env.OPENAI_API_KEY,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
-      temperature: 0.7
-    })
+    body: JSON.stringify({ message: userMessage })
   });
 
-  const data = await response.json();
-  res.status(200).json({ reply: data.choices?.[0]?.message?.content || "Нет ответа" });
+  const data = await res.json();
+  responseBox.textContent = data.reply;
+  input.value = "";
 }
