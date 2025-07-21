@@ -4,30 +4,31 @@
   <meta charset="UTF-8">
   <title>Абрам Чатбот</title>
   <style>
-    body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: auto; }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
     input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
     #response { margin-top: 20px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <h1>Абрам Чатбот</h1>
+  <h3>Абрам Чат</h3>
   <input type="text" id="userInput" placeholder="Напишите ваш вопрос..." />
   <div id="response"></div>
 
-  <script src="/js/chat.js"></script> <!-- исправь путь, если твой файл в другом месте -->
   <script>
     async function sendMessage() {
       const input = document.getElementById("userInput");
       const message = input.value;
       const resBox = document.getElementById("response");
       input.disabled = true;
-      resBox.innerText = "🤖 Думаю...";
+      resBox.innerText = "💬 Думаю...";
+
       try {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message })
         });
+
         const data = await response.json();
         resBox.innerText = data.reply || "Нет ответа.";
       } catch (err) {
