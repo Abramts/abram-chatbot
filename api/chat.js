@@ -1,21 +1,29 @@
-async function sendMessage() {
-  const input = document.getElementById("userInput");
-  const responseBox = document.getElementById("response");
+export default async function handler(req, res) {
+  const { message } = req.body;
 
-  const userMessage = input.value.trim();
-  if (userMessage === "") return;
+  if (!message) {
+    return res.status(400).json({ reply: "Сообщение не передано." });
+  }
 
-  responseBox.textContent = "Абрам думает...";
+  try {
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: message }],
+      }),
+    });
 
-  const res = await fetch("/api/gpt", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message: userMessage })
-  });
+    const json = await openaiRes.json();
+    const reply = json.choices?.[0]?.message?.content?.trim() || "Нет ответа.";
 
-  const data = await res.json();
-  responseBox.textContent = data.reply;
-  input.value = "";
+    res.status(200).json({ reply });
+  } catch (error) {
+    console.error("OpenAI API error:", error);
+    res.status(500).json({ reply: "Ошибка сервера." });
+  }
 }
