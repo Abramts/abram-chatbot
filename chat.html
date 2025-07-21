@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Чат с Абрамом</title>
+  <script src="chat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      margin: 5px 0;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background: #f1f1f1;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Задай вопрос Абраму</h1>
+  <input type="text" id="userInput" placeholder="Напиши что-нибудь...">
+  <button onclick="sendMessage()">Отправить</button>
+  <div id="response"></div>
+</body>
+</html>
