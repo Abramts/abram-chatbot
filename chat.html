@@ -1,33 +1,49 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Чат с Абрамом</title>
-  <script src="chat.js"></script>
+  <meta charset="UTF-8">
+  <title>Абрам Чатбот</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      width: 100%;
-      margin: 5px 0;
-    }
-    #response {
-      margin-top: 20px;
-      white-space: pre-wrap;
-      background: #f1f1f1;
-      padding: 10px;
-    }
+    body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: auto; }
+    input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
+    #response { margin-top: 20px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <h1>Задай вопрос Абраму</h1>
-  <input type="text" id="userInput" placeholder="Напиши что-нибудь...">
-  <button onclick="sendMessage()">Отправить</button>
+  <h1>Абрам Чатбот</h1>
+  <input type="text" id="userInput" placeholder="Напишите ваш вопрос..." />
   <div id="response"></div>
+
+  <script src="/js/chat.js"></script> <!-- исправь путь, если твой файл в другом месте -->
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value;
+      const resBox = document.getElementById("response");
+      input.disabled = true;
+      resBox.innerText = "🤖 Думаю...";
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        resBox.innerText = data.reply || "Нет ответа.";
+      } catch (err) {
+        resBox.innerText = "Ошибка запроса: " + err.message;
+      } finally {
+        input.disabled = false;
+        input.value = "";
+        input.focus();
+      }
+    }
+
+    document.getElementById("userInput").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
 </body>
 </html>
